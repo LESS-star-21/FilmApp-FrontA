@@ -1,0 +1,134 @@
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0f0f13;
+  padding: 20px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: #1a1a24;
+  border-radius: 20px;
+  padding: 36px 32px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+
+  p {
+    margin: 8px 0 28px;
+    color: #6b7280;
+    font-size: 14px;
+  }
+}
+
+.tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 28px;
+  background: #0f0f13;
+  padding: 5px;
+  border-radius: 12px;
+}
+
+.tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  color: #6b7280;
+  transition: all 0.2s;
+
+  &.active {
+    background: #6739e685;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(161, 57, 230, 0.35);
+  }
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1px solid #2d2d3d;
+    border-radius: 10px;
+    font-size: 15px;
+    outline: none;
+    background: #0f0f13;
+    color: #f1f1f1;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &::placeholder {
+      color: #3d3d50;
+    }
+
+    &:focus {
+      border-color: #6739e685;
+      box-shadow: 0 0 0 3px rgba(161, 57, 230, 0.15);
+    }
+  }
+}
+
+.error-msg {
+  color: #e63946;
+  font-size: 13px;
+  margin: 0;
+  text-align: center;
+}
+
+.submit-btn {
+  margin-top: 6px;
+  border: none;
+  background: #e63946;
+  color: #ffffff;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+
+  &:hover:not(:disabled) {
+    background: #c1121f;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}

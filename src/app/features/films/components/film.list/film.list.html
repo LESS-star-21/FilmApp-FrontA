@@ -1,0 +1,120 @@
+<div class="films-page">
+  <!-- Header -->
+  <header class="films-header">
+    <div class="header-left">
+      <h1>🎬 FilmApp</h1>
+      <span class="film-count">{{ films().length }} títulos</span>
+    </div>
+    <div class="header-right">
+      <button class="btn-add" (click)="showForm.set(!showForm())">
+        {{ showForm() ? '✕ Cancelar' : '+ Agregar' }}
+      </button>
+      <button class="btn-logout" (click)="logout()">Salir</button>
+    </div>
+  </header>
+
+  <!-- Form -->
+  @if (showForm()) {
+    <div class="add-form">
+      <h2>Nueva película / serie</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Título *</label>
+          <input [(ngModel)]="newFilm.title" type="text" placeholder="Ej: Inception" name="title" />
+        </div>
+        <div class="form-group">
+          <label>Año *</label>
+          <input [(ngModel)]="newFilm.year" type="number" placeholder="2024" name="year" />
+        </div>
+        <div class="form-group">
+          <label>Género *</label>
+          <input [(ngModel)]="newFilm.genre" type="text" placeholder="Ej: Thriller" name="genre" />
+        </div>
+        <div class="form-group">
+          <label>Tipo</label>
+          <select [(ngModel)]="newFilm.type" name="type">
+            <option value="movie">Película</option>
+            <option value="series">Serie</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Estado</label>
+          <select [(ngModel)]="newFilm.status" name="status">
+            <option value="pending">Pendiente</option>
+            <option value="watched">Vista</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-submit" (click)="addFilm()">Guardar</button>
+    </div>
+  }
+
+  <!-- Filters -->
+  <div class="filters">
+    <div class="filter-group">
+      <button class="filter-btn" [class.active]="filterType === 'all'" (click)="filterType = 'all'">Todos</button>
+      <button class="filter-btn" [class.active]="filterType === 'movie'" (click)="filterType = 'movie'">Películas</button>
+      <button class="filter-btn" [class.active]="filterType === 'series'" (click)="filterType = 'series'">Series</button>
+    </div>
+    <div class="filter-group">
+      <button class="filter-btn" [class.active]="filterStatus === 'all'" (click)="filterStatus = 'all'">Todos</button>
+      <button class="filter-btn" [class.active]="filterStatus === 'pending'" (click)="filterStatus = 'pending'">Pendientes</button>
+      <button class="filter-btn" [class.active]="filterStatus === 'watched'" (click)="filterStatus = 'watched'">Vistos</button>
+    </div>
+  </div>
+
+  @if (error()) {
+    <p class="error-msg">{{ error() }}</p>
+  }
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="loading">Cargando...</div>
+  }
+
+  <!-- Film grid -->
+  @if (!loading()) {
+    <div class="films-grid">
+      @for (film of filteredFilms; track film._id) {
+        <div class="film-card" [class.watched]="film.status === 'watched'">
+          <div class="card-header">
+            <span class="type-badge" [class.series]="film.type === 'series'">
+              {{ film.type === 'movie' ? '🎬' : '📺' }}
+            </span>
+            <span class="status-badge" [class.watched]="film.status === 'watched'">
+              {{ film.status === 'watched' ? 'Vista' : 'Pendiente' }}
+            </span>
+          </div>
+          <h3 class="film-title">{{ film.title }}</h3>
+          <div class="film-meta">
+            <span>{{ film.year }}</span>
+            <span class="dot">·</span>
+            <span>{{ film.genre }}</span>
+          </div>
+          @if (film.rating) {
+            <div class="film-rating">
+              @for (star of starsArray(film.rating); track $index) {
+                <span>★</span>
+              }
+            </div>
+          }
+          @if (film.review) {
+            <p class="film-review">{{ film.review }}</p>
+          }
+          <div class="card-actions">
+            @if (film.status === 'pending') {
+              <button class="btn-watch" (click)="markWatched(film)">Marcar vista</button>
+            }
+            <button class="btn-delete" (click)="deleteFilm(film._id!)">Eliminar</button>
+          </div>
+        </div>
+      }
+      @empty {
+        <div class="empty-state">
+          <p>No hay títulos que mostrar.</p>
+          <button class="btn-add" (click)="showForm.set(true)">Agregar el primero</button>
+        </div>
+      }
+    </div>
+  }
+</div>
