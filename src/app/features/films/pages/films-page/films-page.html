@@ -1,0 +1,195 @@
+<div class="y2k-page">
+  <div class="y2k-corners"></div>
+
+  <header class="y2k-header">
+    <div>
+      <h1 class="y2k-title">🎬 CineWave</h1>
+      <p class="y2k-subtitle">★ Tu colección personal ★</p>
+    </div>
+    <div class="header-actions">
+      <span class="y2k-count">{{ films().length }} títulos</span>
+      <button class="y2k-btn-primary" (click)="showForm.set(!showForm())">
+        {{ showForm() ? '✕ Cancelar' : '+ Agregar' }}
+      </button>
+      <button class="y2k-btn-ghost" routerLink="/actors">Actores</button>
+      <button class="y2k-btn-ghost" routerLink="/directors">Directores</button>
+      <button class="y2k-btn-ghost" routerLink="/genres">Géneros</button>
+      <button class="y2k-btn-ghost" routerLink="/lists">Listas</button>
+      <button class="y2k-btn-ghost" (click)="logout()">Salir</button>
+    </div>
+  </header>
+
+  @if (showForm()) {
+    <div class="y2k-form">
+      <h2>▶ Nueva entrada</h2>
+      <div class="y2k-form-grid">
+  <div class="y2k-field">
+    <label>Título *</label>
+    <input [(ngModel)]="newFilm.title" type="text" placeholder="Ej: Inception" name="title" />
+  </div>
+  <div class="y2k-field">
+    <label>Año *</label>
+    <input [(ngModel)]="newFilm.year" type="number" placeholder="2024" name="year" />
+  </div>
+  <div class="y2k-field">
+    <label>Género *</label>
+    <input [(ngModel)]="newFilm.genre" type="text" placeholder="Ej: Thriller" name="genre" />
+  </div>
+  <div class="y2k-field">
+    <label>Tipo</label>
+    <select [(ngModel)]="newFilm.type" name="type">
+      <option value="movie">🎬 Película</option>
+      <option value="series">📺 Serie</option>
+    </select>
+  </div>
+  <div class="y2k-field">
+    <label>Estado</label>
+    <select [(ngModel)]="newFilm.status" name="status">
+      <option value="pending">⏳ Pendiente</option>
+      <option value="watched">✅ Vista</option>
+    </select>
+  </div>
+  <div class="y2k-field">
+    <label>Director</label>
+    <input [(ngModel)]="newFilm.director" type="text" placeholder="Ej: Christopher Nolan" name="director" />
+  </div>
+  <div class="y2k-field">
+    <label>Actor principal</label>
+    <input [(ngModel)]="newFilm.actor" type="text" placeholder="Ej: Leonardo DiCaprio" name="actor" />
+  </div>
+  <div class="y2k-field" style="grid-column: 1 / -1;">
+    <label>Reseña</label>
+    <input [(ngModel)]="newFilm.review" type="text" placeholder="Tu opinión..." name="review" />
+  </div>
+</div>
+
+<div class="rating-row">
+  <label class="rating-label">Rating</label>
+  <div class="stars-input">
+    @for (star of starsArray(5); track star) {
+      <span class="star-btn"
+        [class.active]="star <= (newFilm.rating || 0)"
+        (click)="newFilm.rating = star">★</span>
+    }
+        </div>
+      </div>
+      <button class="y2k-btn-primary" (click)="addFilm()">▶ Guardar</button>
+    </div>
+  }
+
+  <div class="y2k-filters">
+    <div class="y2k-filter-group">
+      <button class="y2k-filter-btn" [class.active]="filterType === 'all'" (click)="filterType = 'all'">Todos</button>
+      <button class="y2k-filter-btn" [class.active]="filterType === 'movie'" (click)="filterType = 'movie'">🎬 Películas</button>
+      <button class="y2k-filter-btn" [class.active]="filterType === 'series'" (click)="filterType = 'series'">📺 Series</button>
+    </div>
+    <div class="y2k-filter-group">
+      <button class="y2k-filter-btn" [class.active]="filterStatus === 'all'" (click)="filterStatus = 'all'">Todos</button>
+      <button class="y2k-filter-btn" [class.active]="filterStatus === 'pending'" (click)="filterStatus = 'pending'">⏳ Pendientes</button>
+      <button class="y2k-filter-btn" [class.active]="filterStatus === 'watched'" (click)="filterStatus = 'watched'">✅ Vistos</button>
+    </div>
+  </div>
+
+  @if (error()) { <p class="y2k-error">{{ error() }}</p> }
+  @if (loading()) { <div class="y2k-loading">[ Cargando... ]</div> }
+
+  @if (!loading()) {
+    <div class="y2k-grid">
+      @for (film of filteredFilms; track film._id) {
+
+        @if (editingId === film._id) {
+          <!-- MODO EDICIÓN -->
+          <div class="y2k-card editing">
+            <p class="edit-label">✏️ Editando</p>
+            <div class="edit-fields">
+              <div class="y2k-field">
+                <label>Título</label>
+                <input [(ngModel)]="editFilm.title" type="text" [name]="'title-' + film._id" />
+              </div>
+              <div class="y2k-field">
+                <label>Año</label>
+                <input [(ngModel)]="editFilm.year" type="number" [name]="'year-' + film._id" />
+              </div>
+              <div class="y2k-field">
+                <label>Género</label>
+                <input [(ngModel)]="editFilm.genre" type="text" [name]="'genre-' + film._id" />
+              </div>
+              <div class="y2k-field">
+                <label>Tipo</label>
+                <select [(ngModel)]="editFilm.type" [name]="'type-' + film._id">
+                  <option value="movie">🎬 Película</option>
+                  <option value="series">📺 Serie</option>
+                </select>
+              </div>
+              <div class="y2k-field">
+                <label>Estado</label>
+                <select [(ngModel)]="editFilm.status" [name]="'status-' + film._id">
+                  <option value="pending">⏳ Pendiente</option>
+                  <option value="watched">✅ Vista</option>
+                </select>
+              </div>
+              <div class="y2k-field" style="grid-column: 1 / -1;">
+                <label>Reseña</label>
+                <input [(ngModel)]="editFilm.review" type="text" placeholder="Tu opinión..." [name]="'review-' + film._id" />
+              </div>
+            </div>
+
+            <div class="rating-row">
+              <label class="rating-label">Rating</label>
+              <div class="stars-input">
+                @for (star of starsArray(5); track star) {
+                  <span class="star-btn"
+                    [class.active]="star <= (editFilm.rating || 0)"
+                    (click)="editFilm.rating = star">★</span>
+                }
+              </div>
+            </div>
+
+            <div class="y2k-card-actions">
+              <button class="y2k-btn-primary" style="flex:1" (click)="saveEdit()">✔ Guardar</button>
+              <button class="y2k-btn-ghost" (click)="cancelEdit()">✕</button>
+              <button class="y2k-btn-danger" (click)="deleteFilm(film._id!)">🗑 Borrar</button>
+            </div>
+          </div>
+
+        } @else {
+          <!-- MODO NORMAL -->
+          <div class="y2k-card" [class.watched]="film.status === 'watched'">
+            <div class="y2k-card-header">
+              <span style="font-size:22px;">{{ film.type === 'movie' ? '🎬' : '📺' }}</span>
+              <span class="y2k-badge" [class.watched]="film.status === 'watched'" [class.pending]="film.status === 'pending'">
+                {{ film.status === 'watched' ? 'Vista' : 'Pendiente' }}
+              </span>
+            </div>
+            <h3 class="y2k-card-title">{{ film.title }}</h3>
+            <p class="y2k-card-meta">
+              <span>{{ film.year }}</span>
+              <span class="dot">·</span>
+              <span>{{ film.genre }}</span>
+            </p>
+            @if (film.rating) {
+              <div class="y2k-stars">
+                @for (star of starsArray(5); track star) {
+                  <span [class.active]="star <= film.rating!">★</span>
+                }
+              </div>
+            }
+            @if (film.review) {
+              <p class="y2k-card-bio">{{ film.review }}</p>
+            }
+            <div class="y2k-card-actions">
+              <button class="y2k-btn-ghost" style="flex:1" (click)="startEdit(film)">✏️ Editar</button>
+            </div>
+          </div>
+        }
+
+      }
+      @empty {
+        <div class="y2k-empty">
+          <p>[ Sin títulos registrados ]</p>
+          <button class="y2k-btn-primary" (click)="showForm.set(true)">+ Agregar el primero</button>
+        </div>
+      }
+    </div>
+  }
+</div>

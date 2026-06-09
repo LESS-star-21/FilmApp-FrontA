@@ -1,29 +1,33 @@
 <div class="auth-container">
   <div class="auth-card">
-    <h1>FilmApp</h1>
-    <p>Tu diario personal de películas y series</p>
+    <span class="auth-corner tl"></span>
+    <span class="auth-corner tr"></span>
+    <span class="auth-corner bl"></span>
+    <span class="auth-corner br"></span>
 
-    <div class="tabs">
-      <button class="tab" [class.active]="activeTab === 'login'" (click)="setTab('login')">Iniciar sesión</button>
-      <button class="tab" [class.active]="activeTab === 'register'" (click)="setTab('register')">Registrarse</button>
+    <span class="auth-dvd">💿</span>
+    <h1 class="auth-title">CineWave</h1>
+    <p class="auth-subtitle">★ Películas y series ★</p>
+
+    <div class="auth-tabs">
+      <button class="auth-tab" [class.active]="activeTab === 'login'" (click)="setTab('login')">Login</button>
+      <button class="auth-tab" [class.active]="activeTab === 'register'" (click)="setTab('register')">Registro</button>
     </div>
 
     @if (activeTab === 'login') {
       <form class="auth-form">
         <div class="form-group">
-          <label for="email">Email</label>
-          <input [(ngModel)]="email" id="email" type="email" placeholder="Ingresa tu email" name="email" />
+          <label for="user">Email</label>
+          <input [(ngModel)]="user" id="user" type="email" placeholder="email@ejemplo.com" name="user" />
         </div>
         <div class="form-group">
-          <label for="password">Contraseña</label>
-          <input [(ngModel)]="password" id="password" type="password" placeholder="Ingresa tu contraseña" name="password" />
+          <label for="password">
+            Contraseña
+            @if (error) { <span class="error-inline">— {{ error }}</span> }
+          </label>
+          <input [(ngModel)]="password" id="password" type="password" placeholder="••••••••" name="password" />
         </div>
-        @if (error) {
-          <p class="error-msg">{{ error }}</p>
-        }
-        <button type="button" class="submit-btn" [disabled]="loading" (click)="sendLogin()">
-          {{ loading ? 'Ingresando...' : 'Ingresar' }}
-        </button>
+        <button type="button" class="submit-btn" (click)="sendLogin()">▶ Ingresar</button>
       </form>
     }
 
@@ -31,22 +35,20 @@
       <form class="auth-form">
         <div class="form-group">
           <label for="name">Nombre</label>
-          <input [(ngModel)]="name" id="name" type="text" placeholder="Ingresa tu nombre" name="name" />
+          <input [(ngModel)]="name" id="name" type="text" placeholder="Tu nombre" name="name" />
         </div>
         <div class="form-group">
           <label for="regEmail">Email</label>
-          <input [(ngModel)]="regEmail" id="regEmail" type="email" placeholder="Ingresa tu email" name="regEmail" />
+          <input [(ngModel)]="regEmail" id="regEmail" type="email" placeholder="email@ejemplo.com" name="regEmail" />
         </div>
         <div class="form-group">
-          <label for="regPassword">Contraseña</label>
+          <label for="regPassword">
+            Contraseña
+            @if (error) { <span class="error-inline">— {{ error }}</span> }
+          </label>
           <input [(ngModel)]="regPassword" id="regPassword" type="password" placeholder="Mínimo 6 caracteres" name="regPassword" />
         </div>
-        @if (error) {
-          <p class="error-msg">{{ error }}</p>
-        }
-        <button type="button" class="submit-btn" [disabled]="loading" (click)="sendRegister()">
-          {{ loading ? 'Registrando...' : 'Crear cuenta' }}
-        </button>
+        <button type="button" class="submit-btn" (click)="sendRegister()">▶ Crear cuenta</button>
       </form>
     }
   </div>

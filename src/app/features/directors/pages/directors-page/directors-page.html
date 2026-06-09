@@ -1,0 +1,63 @@
+<div class="y2k-page">
+  <div class="y2k-corners"></div>
+
+  <header class="y2k-header">
+    <div>
+      <h1 class="y2k-title">🎬 Directores</h1>
+      <p class="y2k-subtitle">★ Catálogo de directores ★</p>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <span class="y2k-count">{{ directors().length }} registros</span>
+      <button class="y2k-btn-primary" (click)="showForm.set(!showForm())">
+        {{ showForm() ? '✕ Cancelar' : '+ Agregar' }}
+      </button>
+      <button class="y2k-btn-ghost" routerLink="/films">◀ Volver</button>
+    </div>
+  </header>
+
+  @if (showForm()) {
+    <div class="y2k-form">
+      <h2>▶ Nuevo director</h2>
+      <div class="y2k-form-grid">
+        <div class="y2k-field">
+          <label>Nombre *</label>
+          <input [(ngModel)]="newDirector.name" type="text" placeholder="Ej: Christopher Nolan" name="name" />
+        </div>
+        <div class="y2k-field">
+          <label>Nacionalidad</label>
+          <input [(ngModel)]="newDirector.nationality" type="text" placeholder="Ej: Británico" name="nationality" />
+        </div>
+        <div class="y2k-field">
+          <label>Biografía</label>
+          <input [(ngModel)]="newDirector.biography" type="text" placeholder="Breve descripción" name="biography" />
+        </div>
+      </div>
+      <button class="y2k-btn-primary" (click)="addDirector()">▶ Guardar</button>
+    </div>
+  }
+
+  @if (error()) { <p class="y2k-error">{{ error() }}</p> }
+  @if (loading()) { <div class="y2k-loading">[ Cargando... ]</div> }
+
+  @if (!loading()) {
+    <div class="y2k-grid">
+      @for (director of directors(); track director._id) {
+        <div class="y2k-card">
+          <h3 class="y2k-card-title">{{ director.name }}</h3>
+          @if (director.nationality) {
+            <p class="y2k-card-meta">{{ director.nationality }}</p>
+          }
+          @if (director.biography) {
+            <p class="y2k-card-bio">{{ director.biography }}</p>
+          }
+          <div class="y2k-card-actions">
+            <button class="y2k-btn-danger" (click)="deleteDirector(director._id!)">✕ Borrar</button>
+          </div>
+        </div>
+      }
+      @empty {
+        <div class="y2k-empty"><p>[ Sin directores registrados ]</p></div>
+      }
+    </div>
+  }
+</div>

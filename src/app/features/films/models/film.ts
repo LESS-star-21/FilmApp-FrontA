@@ -21,6 +21,8 @@ export interface CreateFilmRequest {
   status?: 'pending' | 'watched';
   rating?: number;
   review?: string;
+  director?: string;
+  actor?: string;
 }
 
 export interface UpdateFilmRequest {
@@ -30,10 +32,5 @@ export interface UpdateFilmRequest {
   type?: 'movie' | 'series';
   status?: 'pending' | 'watched';
   rating?: number;
-  review?: string;
-}
-
-export interface RateFilmRequest {
-  rating: number;
   review?: string;
 }

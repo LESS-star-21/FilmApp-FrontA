@@ -1,0 +1,153 @@
+<div class="y2k-page">
+  <div class="y2k-corners"></div>
+
+  <header class="y2k-header">
+    <div>
+      <h1 class="y2k-title">📋 Mis Listas</h1>
+      <p class="y2k-subtitle">★ Colecciones personales ★</p>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      <span class="y2k-count">{{ lists().length }} listas</span>
+      <button class="y2k-btn-primary" (click)="showForm.set(!showForm())">
+        {{ showForm() ? '✕ Cancelar' : '+ Nueva lista' }}
+      </button>
+      <button class="y2k-btn-ghost" routerLink="/films">◀ Volver</button>
+    </div>
+  </header>
+
+  @if (showForm()) {
+    <div class="y2k-form">
+      <h2>▶ Nueva lista</h2>
+      <div class="y2k-form-grid">
+        <div class="y2k-field">
+          <label>Nombre *</label>
+          <input [(ngModel)]="newList.name" type="text" placeholder="Ej: Mejores del 2024" name="name" />
+        </div>
+        <div class="y2k-field">
+          <label>Descripción</label>
+          <input [(ngModel)]="newList.description" type="text" placeholder="Descripción opcional" name="description" />
+        </div>
+      </div>
+      <button class="y2k-btn-primary" (click)="addList()">▶ Guardar</button>
+    </div>
+  }
+
+  @if (error()) { <p class="y2k-error">{{ error() }}</p> }
+  @if (loading()) { <div class="y2k-loading">[ Cargando... ]</div> }
+
+  @if (!loading()) {
+    <div class="lists-layout">
+
+      <!-- Lista de listas -->
+      <div class="lists-sidebar">
+        @for (list of lists(); track list._id) {
+          <div class="list-item" [class.selected]="selectedListId === list._id"
+            (click)="selectList(list._id!)">
+            <div class="list-item-info">
+              <span class="list-item-name">{{ list.name }}</span>
+              <span class="list-item-count">{{ list.films ? list.films.length : 0 }} films</span>
+            </div>
+            <button class="y2k-btn-danger list-delete" (click)="$event.stopPropagation(); deleteList(list._id!)">✕</button>
+          </div>
+        }
+        @empty {
+          <div class="y2k-empty"><p>[ Sin listas ]</p></div>
+        }
+      </div>
+
+      <!-- Detalle de lista seleccionada -->
+      <div class="list-detail">
+        @if (getSelectedList(); as list) {
+          <div class="detail-header">
+  @if (editingListId === list._id) {
+    <div style="display:flex; gap:10px; align-items:center; flex:1;">
+      <div class="y2k-field" style="flex:1;">
+        <label>Nombre</label>
+        <input [(ngModel)]="editListData.name" type="text" name="editName" />
+      </div>
+      <div class="y2k-field" style="flex:1;">
+        <label>Descripción</label>
+        <input [(ngModel)]="editListData.description" type="text" name="editDesc" />
+      </div>
+      <button class="y2k-btn-primary" (click)="saveEditList()">✔ Listo</button>
+      <button class="y2k-btn-ghost" (click)="cancelEditList()">✕</button>
+    </div>
+  } @else {
+    <div>
+      <h2 class="detail-title">{{ list.name }}</h2>
+      @if (list.description) {
+        <p class="detail-desc">{{ list.description }}</p>
+      }
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="y2k-btn-ghost" (click)="startEditList(list)">✏️ Editar</button>
+      <button class="y2k-btn-primary" (click)="toggleAddFilm(list._id!)">
+        {{ showAddFilm === list._id ? '✕ Cancelar' : '+ Agregar película' }}
+      </button>
+    </div>
+  }
+</div>
+
+          <!-- Selector de películas para agregar -->
+          @if (showAddFilm === list._id) {
+            <div class="film-selector">
+              <p class="selector-label">[ Selecciona una película para agregar ]</p>
+              @if (filmsNotInList(list).length === 0) {
+                <p class="selector-empty">Todas tus películas ya están en esta lista.</p>
+              }
+              <div class="selector-grid">
+                @for (film of filmsNotInList(list); track film._id) {
+                  <div class="selector-item" (click)="addFilmToList(list._id!, film._id!)">
+                    <span>{{ film.type === 'movie' ? '🎬' : '📺' }}</span>
+                    <span class="selector-name">{{ film.title }}</span>
+                    <span class="selector-year">{{ film.year }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Películas en la lista -->
+          <div class="y2k-grid" style="margin-top: 20px;">
+            @for (film of list.films; track film._id) {
+              <div class="y2k-card" [class.watched]="film.status === 'watched'">
+                <div class="y2k-card-header">
+                  <span style="font-size:20px;">{{ film.type === 'movie' ? '🎬' : '📺' }}</span>
+                  <span class="y2k-badge" [class.watched]="film.status === 'watched'" [class.pending]="film.status === 'pending'">
+                    {{ film.status === 'watched' ? 'Vista' : 'Pendiente' }}
+                  </span>
+                </div>
+                <h3 class="y2k-card-title">{{ film.title }}</h3>
+                <p class="y2k-card-meta">
+                  <span>{{ film.year }}</span>
+                  <span class="dot">·</span>
+                  <span>{{ film.genre }}</span>
+                </p>
+                <div class="y2k-card-actions">
+                  <button class="y2k-btn-danger" style="flex:1"
+                    (click)="removeFilmFromList(list._id!, film._id!)">
+                    ✕ Quitar de lista
+                  </button>
+                </div>
+              </div>
+            }
+            @empty {
+              <div class="y2k-empty">
+                <p>[ Lista vacía ]</p>
+                <button class="y2k-btn-primary" (click)="toggleAddFilm(list._id!)">
+                  + Agregar película
+                </button>
+              </div>
+            }
+          </div>
+
+        } @else {
+          <div class="detail-empty">
+            <p>[ Selecciona una lista para ver su contenido ]</p>
+          </div>
+        }
+      </div>
+
+    </div>
+  }
+</div>

@@ -1,0 +1,56 @@
+<div class="y2k-page">
+  <div class="y2k-corners"></div>
+
+  <header class="y2k-header">
+    <div>
+      <h1 class="y2k-title">🎞️ Géneros</h1>
+      <p class="y2k-subtitle">★ Catálogo de géneros ★</p>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <span class="y2k-count">{{ genres().length }} registros</span>
+      <button class="y2k-btn-primary" (click)="showForm.set(!showForm())">
+        {{ showForm() ? '✕ Cancelar' : '+ Agregar' }}
+      </button>
+      <button class="y2k-btn-ghost" routerLink="/films">◀ Volver</button>
+    </div>
+  </header>
+
+  @if (showForm()) {
+    <div class="y2k-form">
+      <h2>▶ Nuevo género</h2>
+      <div class="y2k-form-grid">
+        <div class="y2k-field">
+          <label>Nombre *</label>
+          <input [(ngModel)]="newGenre.name" type="text" placeholder="Ej: Acción" name="name" />
+        </div>
+        <div class="y2k-field">
+          <label>Descripción</label>
+          <input [(ngModel)]="newGenre.description" type="text" placeholder="Breve descripción" name="description" />
+        </div>
+      </div>
+      <button class="y2k-btn-primary" (click)="addGenre()">▶ Guardar</button>
+    </div>
+  }
+
+  @if (error()) { <p class="y2k-error">{{ error() }}</p> }
+  @if (loading()) { <div class="y2k-loading">[ Cargando... ]</div> }
+
+  @if (!loading()) {
+    <div class="y2k-grid">
+      @for (genre of genres(); track genre._id) {
+        <div class="y2k-card">
+          <h3 class="y2k-card-title">{{ genre.name }}</h3>
+          @if (genre.description) {
+            <p class="y2k-card-bio">{{ genre.description }}</p>
+          }
+          <div class="y2k-card-actions">
+            <button class="y2k-btn-danger" (click)="deleteGenre(genre._id!)">✕ Borrar</button>
+          </div>
+        </div>
+      }
+      @empty {
+        <div class="y2k-empty"><p>[ Sin géneros registrados ]</p></div>
+      }
+    </div>
+  }
+</div>
