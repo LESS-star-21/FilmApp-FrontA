@@ -37,16 +37,16 @@ ng build
 ```
 
 ## Estructura del proyecto
-src/app/
-features/
-auth/          → Login y registro
-films/         → Gestión de películas y series
-actors/        → Catálogo de actores
-directors/     → Catálogo de directores
-genres/        → Catálogo de géneros
-lists/         → Listas personalizadas
-shared/
-services/      → Session (manejo de token JWT)
+- src/app/
+- features/
+- auth/          → Login y registro
+- films/         → Gestión de películas y series
+- actors/        → Catálogo de actores
+- directors/     → Catálogo de directores
+- genres/        → Catálogo de géneros
+- lists/         → Listas personalizadas
+- shared/
+- services/      → Session (manejo de token JWT)
 
 ## Funcionalidades
 
